@@ -16,23 +16,23 @@ Requires SDL3 and SDL3_ttf. One default font is picked from the system at runtim
 ```c
 GCARENA *arena = gc_arena_create(GC_MB(2));
 GCWINDOW *window = gc_window_create(arena, gc_str8_create(arena, "app"), 1280, 720, GC_FALSE);
-GCUI ui = gc_ui_create(arena, window);
+GCUI *ui = gc_ui_create(arena, window);
 
-gc_ui_load_default_font(&ui, 20.0f);
+gc_ui_load_default_font(ui, 20.0f);
 
 while(!gc_window_should_quit(window)){
     gc_window_begin(window);
-    gc_ui_begin(&ui);
+    gc_ui_begin(ui);
 
     GCF32 dt = gc_window_dt(window);
-    if(gc_ui_button(&ui, (GCRECT){32.0f, 32.0f, 200.0f, 48.0f}, "Click"))
+    if(gc_ui_button(ui, (GCRECT){32.0f, 32.0f, 200.0f, 48.0f}, "Click"))
         ...
 
-    gc_ui_end(&ui);
+    gc_ui_end(ui);
     gc_window_end(window);
 }
 
-gc_ui_destroy(&ui);
+gc_ui_destroy(ui);
 gc_window_destroy(window);
 gc_arena_destroy(arena);
 ```
