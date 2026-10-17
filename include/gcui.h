@@ -225,7 +225,7 @@ typedef struct
     GCCOLOR   clearColor;
 } GCWINDOW;
 
-static inline GCWINDOW *gc_window_create(GCARENA *arena, GCSTRING8 *title, GCU32 width, GCU32 height, GCB32 fullscreen)
+static inline GCWINDOW *gc_window_create(GCARENA *arena, const char *title, GCU32 width, GCU32 height, GCB32 fullscreen)
 {
     GC_ASSERT(arena);
     GC_ASSERT(title);
@@ -242,7 +242,7 @@ static inline GCWINDOW *gc_window_create(GCARENA *arena, GCSTRING8 *title, GCU32
     memset(window, 0, sizeof(*window));
     window->dimensions = (GCVEC2U32){width, height};
     window->position = (GCVEC2U32){0, 0 };
-    window->title = title;
+    window->title = gc_str8_create(arena, title);
     window->clearColor = gc_color(24, 24, 27, 255);
     window->perfFreq = SDL_GetPerformanceFrequency();
     window->lastCounter = SDL_GetPerformanceCounter();
@@ -252,7 +252,7 @@ static inline GCWINDOW *gc_window_create(GCARENA *arena, GCSTRING8 *title, GCU32
     if(fullscreen)
         flags |= SDL_WINDOW_FULLSCREEN;
 
-    SDL_Window *handle = SDL_CreateWindow((const char*)title->data, (int)width, (int)height, flags);
+    SDL_Window *handle = SDL_CreateWindow(title, (int)width, (int)height, flags);
     if(!handle){
         printf("SDL_CreateWindow failed: %s\n", SDL_GetError());
         return NULL;

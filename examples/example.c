@@ -3,8 +3,7 @@
 int main(void){
     GCARENA *arena = gc_arena_create(GC_MB(2));
 
-    GCSTRING8 *windowTitle = gc_str8_create(arena, "gcui");
-    GCWINDOW *window = gc_window_create(arena, windowTitle, 1280, 720, GC_FALSE);
+    GCWINDOW *window = gc_window_create(arena, "gcui", 1280, 720, GC_FALSE);
     if(!window){
         printf("failed to create window\n");
         gc_arena_destroy(arena);

@@ -1,3 +1,6 @@
 CompileFlags:
-  Add: [-Iinclude, -Wall, -Wextra, -Werror, -g]
-  Compiler: gcc
+  Add:
+    - "-Wall"
+    - "-Wextra"
+    - "-Werror"
+    - "-I/home/giovanni/Work/Code/gcui/include/"
