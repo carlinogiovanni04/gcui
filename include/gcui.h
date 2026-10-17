@@ -767,6 +767,21 @@ static inline void gc_ui_panel(GCUI *ui, GCRECT rect, GCCOLOR color)
     gc_draw_fill(ui->window, rect, color);
 }
 
+static inline void gc_ui_separator(GCUI *ui, GCRECT rect, GCCOLOR color)
+{
+    GC_ASSERT(ui);
+
+    if(rect.w <= 0.0f || rect.h <= 0.0f)
+        return;
+    if(rect.w >= rect.h){
+        GCF32 y = rect.y + (rect.h - 1.0f) * 0.5f;
+        gc_draw_fill(ui->window, (GCRECT){rect.x, y, rect.w, 1.0f}, color);
+    } else {
+        GCF32 x = rect.x + (rect.w - 1.0f) * 0.5f;
+        gc_draw_fill(ui->window, (GCRECT){x, rect.y, 1.0f, rect.h}, color);
+    }
+}
+
 static inline void gc_ui_label(GCUI *ui, GCRECT rect, const char *text, GCCOLOR color)
 {
     GC_ASSERT(ui);
