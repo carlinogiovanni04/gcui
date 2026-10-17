@@ -17,8 +17,7 @@ Requires SDL3 and SDL3_ttf. One default font is picked from the system at runtim
 GCARENA *arena = gc_arena_create(GC_MB(2));
 GCWINDOW *window = gc_window_create(arena, gc_str8_create(arena, "app"), 1280, 720, GC_FALSE);
 
-GCUI ui;
-gc_ui_init(&ui, window);
+GCUI ui = gc_ui_init(arena, window);
 gc_ui_load_default_font(&ui, 20.0f);
 
 while(!gc_window_should_quit(window)){
@@ -33,9 +32,8 @@ while(!gc_window_should_quit(window)){
     gc_window_end(window);
 }
 
-gc_ui_shutdown(&ui);
+gc_ui_destroy(&ui);
 gc_window_destroy(window);
-gc_window_quit();
 gc_arena_destroy(arena);
 ```
 

@@ -11,9 +11,9 @@ int main(void){
         return 1;
     }
 
-    GCUI ui;
-    gc_ui_init(&ui, window);
-    gc_ui_load_default_font(&ui, 20.0f);
+    GCUI *ui = gc_ui_init(arena, window);
+    gc_ui_load_default_font(ui, 20.0f);
+
 
     GCB32 showBox = GC_TRUE;
     GCB32 fast = GC_FALSE;
@@ -30,7 +30,7 @@ int main(void){
 
     while(!gc_window_should_quit(window)){
         gc_window_begin(window);
-        gc_ui_begin(&ui);
+        gc_ui_begin(ui);
 
         GCF32 dt = gc_window_dt(window);
 
@@ -45,41 +45,40 @@ int main(void){
             gc_draw_fill(window, (GCRECT){boxX, 400.0f, 64.0f, 64.0f}, cols[mode]);
         }
 
-        gc_ui_panel(&ui, (GCRECT){16.0f, 16.0f, 344.0f, 544.0f}, gc_color(36, 36, 42, 255));
+        gc_ui_panel(ui, (GCRECT){16.0f, 16.0f, 344.0f, 544.0f}, gc_color(36, 36, 42, 255));
 
-        if(gc_ui_button(&ui, (GCRECT){32.0f, 32.0f, 312.0f, 48.0f}, "Click me"))
+        if(gc_ui_button(ui, (GCRECT){32.0f, 32.0f, 312.0f, 48.0f}, "Click me"))
             clicks += 1;
 
         snprintf(line, sizeof(line), "clicks: %d", clicks);
-        gc_ui_label(&ui, (GCRECT){32.0f, 92.0f, 312.0f, 28.0f}, line, gc_color(245, 245, 245, 255));
+        gc_ui_label(ui, (GCRECT){32.0f, 92.0f, 312.0f, 28.0f}, line, gc_color(245, 245, 245, 255));
 
         snprintf(line, sizeof(line), "dt: %.3f ms  fps: %.0f", (GCF64)(dt * 1000.0f), dt > 0.0f ? (GCF64)(1.0f / dt) : 0.0);
-        gc_ui_label(&ui, (GCRECT){32.0f, 124.0f, 312.0f, 28.0f}, line, gc_color(180, 180, 190, 255));
+        gc_ui_label(ui, (GCRECT){32.0f, 124.0f, 312.0f, 28.0f}, line, gc_color(180, 180, 190, 255));
 
-        gc_ui_checkbox(&ui, (GCRECT){32.0f, 160.0f, 24.0f, 24.0f}, "Show box", &showBox);
-        gc_ui_label(&ui, (GCRECT){32.0f, 192.0f, 312.0f, 28.0f}, "Speed", gc_color(245, 245, 245, 255));
-        gc_ui_slider(&ui, (GCRECT){32.0f, 224.0f, 312.0f, 24.0f}, 0.0f, 600.0f, &speed);
+        gc_ui_checkbox(ui, (GCRECT){32.0f, 160.0f, 24.0f, 24.0f}, "Show box", &showBox);
+        gc_ui_label(ui, (GCRECT){32.0f, 192.0f, 312.0f, 28.0f}, "Speed", gc_color(245, 245, 245, 255));
+        gc_ui_slider(ui, (GCRECT){32.0f, 224.0f, 312.0f, 24.0f}, 0.0f, 600.0f, &speed);
 
-        gc_ui_label(&ui, (GCRECT){32.0f, 260.0f, 312.0f, 28.0f}, "Name", gc_color(245, 245, 245, 255));
-        gc_ui_textbox(&ui, (GCRECT){32.0f, 292.0f, 312.0f, 36.0f}, &name, &nameCap, arena);
+        gc_ui_label(ui, (GCRECT){32.0f, 260.0f, 312.0f, 28.0f}, "Name", gc_color(245, 245, 245, 255));
+        gc_ui_textbox(ui, (GCRECT){32.0f, 292.0f, 312.0f, 36.0f}, &name, &nameCap, arena);
         snprintf(line, sizeof(line), "Hello, %s", name);
-        gc_ui_label(&ui, (GCRECT){32.0f, 336.0f, 312.0f, 28.0f}, line, gc_color(180, 180, 190, 255));
+        gc_ui_label(ui, (GCRECT){32.0f, 336.0f, 312.0f, 28.0f}, line, gc_color(180, 180, 190, 255));
 
-        gc_ui_label(&ui, (GCRECT){32.0f, 372.0f, 312.0f, 28.0f}, "Box color", gc_color(245, 245, 245, 255));
-        gc_ui_combobox(&ui, (GCRECT){32.0f, 404.0f, 312.0f, 40.0f}, modes, 3, &mode);
+        gc_ui_label(ui, (GCRECT){32.0f, 372.0f, 312.0f, 28.0f}, "Box color", gc_color(245, 245, 245, 255));
+        gc_ui_combobox(ui, (GCRECT){32.0f, 404.0f, 312.0f, 40.0f}, modes, 3, &mode);
 
-        gc_ui_toggle(&ui, (GCRECT){32.0f, 456.0f, 56.0f, 28.0f}, "Fast", &fast);
+        gc_ui_toggle(ui, (GCRECT){32.0f, 456.0f, 56.0f, 28.0f}, "Fast", &fast);
 
-        gc_ui_label(&ui, (GCRECT){32.0f, 496.0f, 312.0f, 28.0f}, "Progress", gc_color(245, 245, 245, 255));
-        gc_ui_progress(&ui, (GCRECT){32.0f, 528.0f, 312.0f, 16.0f}, boxX / 1280.0f);
+        gc_ui_label(ui, (GCRECT){32.0f, 496.0f, 312.0f, 28.0f}, "Progress", gc_color(245, 245, 245, 255));
+        gc_ui_progress(ui, (GCRECT){32.0f, 528.0f, 312.0f, 16.0f}, boxX / 1280.0f);
 
-        gc_ui_end(&ui);
+        gc_ui_end(ui);
         gc_window_end(window);
     }
 
-    gc_ui_shutdown(&ui);
+    gc_ui_destroy(ui);
     gc_window_destroy(window);
-    gc_window_quit();
     gc_arena_destroy(arena);
 
     return 0;

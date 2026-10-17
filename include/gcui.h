@@ -421,12 +421,9 @@ static inline void gc_window_destroy(GCWINDOW *window)
         SDL_DestroyWindow((SDL_Window *)window->handle);
         window->handle = NULL;
     }
-}
 
-static inline void gc_window_quit(void)
-{
-    TTF_Quit();
     SDL_Quit();
+    TTF_Quit();
 }
 
 static inline void gc_sleep_ms(GCU32 ms)
@@ -489,13 +486,15 @@ typedef struct
     GCF32    popupRowH;
 } GCUI;
 
-static inline void gc_ui_init(GCUI *ui, GCWINDOW *window)
-{
-    GC_ASSERT(ui);
+static inline GCUI *gc_ui_init(GCARENA *arena, GCWINDOW *window)
+{;
     GC_ASSERT(window);
 
-    memset(ui, 0, sizeof(*ui));
-    ui->window = window;
+    GCUI *result = (GCUI*)gc_arena_push(arena, sizeof(GCUI));
+    memset(result, 0, sizeof(*result));
+    result->window = window;
+
+    return result;
 }
 
 static inline GCB32 gc_ui_set_font(GCUI *ui, const char *path, GCF32 size)
@@ -604,7 +603,7 @@ static inline void gc_ui_end(GCUI *ui)
         gc_popup_draw(ui);
 }
 
-static inline void gc_ui_shutdown(GCUI *ui)
+static inline void gc_ui_destroy(GCUI *ui)
 {
     if(!ui)
         return;
