@@ -486,7 +486,7 @@ typedef struct
     GCF32    popupRowH;
 } GCUI;
 
-static inline GCUI *gc_ui_init(GCARENA *arena, GCWINDOW *window)
+static inline GCUI *gc_ui_create(GCARENA *arena, GCWINDOW *window)
 {;
     GC_ASSERT(window);
 

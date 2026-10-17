@@ -11,7 +11,7 @@ int main(void){
         return 1;
     }
 
-    GCUI *ui = gc_ui_init(arena, window);
+    GCUI *ui = gc_ui_create(arena, window);
     gc_ui_load_default_font(ui, 20.0f);
 
 
