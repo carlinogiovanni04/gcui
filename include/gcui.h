@@ -518,7 +518,37 @@ static inline GCB32 gc_ui_load_default_font(GCUI *ui, GCF32 size)
 {
     GC_ASSERT(ui);
 
+    const char *sysRoot = getenv("SystemRoot");
+    if(!sysRoot)
+        sysRoot = getenv("windir");
+    if(sysRoot && sysRoot[0]){
+        static const char *winNames[] = {
+            "segoeui.ttf",
+            "arial.ttf",
+            "calibri.ttf",
+            "tahoma.ttf",
+            "verdana.ttf",
+        };
+        for(GCUSIZE i = 0; i < sizeof(winNames) / sizeof(winNames[0]); ++i){
+            char winPath[512];
+            snprintf(winPath, sizeof(winPath), "%s\\Fonts\\%s", sysRoot, winNames[i]);
+            winPath[sizeof(winPath) - 1] = 0;
+            if(gc_ui_set_font(ui, winPath, size))
+                return GC_TRUE;
+        }
+    }
+
     static const char *paths[] = {
+        "C:\\Windows\\Fonts\\segoeui.ttf",
+        "C:\\Windows\\Fonts\\arial.ttf",
+        "C:\\Windows\\Fonts\\calibri.ttf",
+        "C:\\Windows\\Fonts\\tahoma.ttf",
+        "C:\\Windows\\Fonts\\verdana.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/System/Library/Fonts/Supplemental/Verdana.ttf",
+        "/System/Library/Fonts/Supplemental/Tahoma.ttf",
+        "/Library/Fonts/Arial.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
         "/usr/share/fonts/TTF/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/Adwaita/AdwaitaSans-Regular.ttf",
