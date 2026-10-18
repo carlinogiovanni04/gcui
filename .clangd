@@ -1,6 +1,5 @@
 CompileFlags:
   Add:
-    - "-Wall"
-    - "-Wextra"
-    - "-Werror"
-    - "-ID:/code/gcui/include/"
+    - "-std=c11"
+    - "-ID:/code/gcui/include"
+    - "-ID:/libraries/include"
