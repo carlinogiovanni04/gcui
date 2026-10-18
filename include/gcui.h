@@ -531,6 +531,8 @@ typedef struct {
     GCI32        popupSelected;
     GCI32        popupHot;
     GCF32        popupRowH;
+    GCRECT       clipStack[8];
+    GCI32        clipDepth;
 } GCUI;
 
 typedef struct {
@@ -570,9 +572,22 @@ static inline GCB32 gc_ui_load_default_font(GCUI *ui, GCF32 size)
 {
     GC_ASSERT(ui);
 
+#if defined(_WIN32)
+    char  *sysRootOwned = NULL;
+    size_t sysRootSize  = 0;
+    _dupenv_s(&sysRootOwned, &sysRootSize, "SystemRoot");
+    const char *sysRoot = sysRootOwned;
+    if (!sysRoot || !sysRoot[0]) {
+        free(sysRootOwned);
+        sysRootOwned = NULL;
+        _dupenv_s(&sysRootOwned, &sysRootSize, "windir");
+        sysRoot = sysRootOwned;
+    }
+#else
     const char *sysRoot = getenv("SystemRoot");
     if (!sysRoot)
         sysRoot = getenv("windir");
+#endif
     if (sysRoot && sysRoot[0]) {
         static const char *winNames[] = {
             "segoeui.ttf", "arial.ttf", "calibri.ttf", "tahoma.ttf", "verdana.ttf",
@@ -581,10 +596,17 @@ static inline GCB32 gc_ui_load_default_font(GCUI *ui, GCF32 size)
             char winPath[512];
             snprintf(winPath, sizeof(winPath), "%s\\Fonts\\%s", sysRoot, winNames[i]);
             winPath[sizeof(winPath) - 1] = 0;
-            if (gc_ui_set_font(ui, winPath, size))
+            if (gc_ui_set_font(ui, winPath, size)) {
+#if defined(_WIN32)
+                free(sysRootOwned);
+#endif
                 return GC_TRUE;
+            }
         }
     }
+#if defined(_WIN32)
+    free(sysRootOwned);
+#endif
 
     static const char *paths[] = {
         "C:\\Windows\\Fonts\\segoeui.ttf",
@@ -638,6 +660,8 @@ static inline void gc_ui_begin(GCUI *ui)
     ui->hot           = 0;
     ui->popupOpen     = GC_FALSE;
     ui->popupHot      = -1;
+    ui->clipDepth     = 0;
+    SDL_SetRenderClipRect((SDL_Renderer *)ui->window->renderer, NULL);
 }
 
 static inline void gc_popup_draw(GCUI *ui);
@@ -748,6 +772,28 @@ static inline void gc_text_clip_rect(GCUI *ui, GCRECT rect)
 {
     GC_ASSERT(ui);
 
+    if (ui->clipDepth < (GCI32)(sizeof(ui->clipStack) / sizeof(ui->clipStack[0]))) {
+        if (ui->clipDepth > 0) {
+            GCRECT parent = ui->clipStack[ui->clipDepth - 1];
+            GCF32 right      = parent.x + parent.w;
+            GCF32 bottom     = parent.y + parent.h;
+            GCF32 nextRight  = rect.x + rect.w;
+            GCF32 nextBottom = rect.y + rect.h;
+            if (rect.x < parent.x)
+                rect.x = parent.x;
+            if (rect.y < parent.y)
+                rect.y = parent.y;
+            if (nextRight > right)
+                nextRight = right;
+            if (nextBottom > bottom)
+                nextBottom = bottom;
+            rect.w = nextRight - rect.x;
+            rect.h = nextBottom - rect.y;
+        }
+        ui->clipStack[ui->clipDepth] = rect;
+        ui->clipDepth += 1;
+    }
+
     GCI32 clipW = (int)rect.w - 2;
     GCI32 clipH = (int)rect.h - 2;
     if (clipW < 1)
@@ -762,7 +808,16 @@ static inline void gc_text_clip_clear(GCUI *ui)
 {
     GC_ASSERT(ui);
 
-    SDL_SetRenderClipRect((SDL_Renderer *)ui->window->renderer, NULL);
+    if (ui->clipDepth > 0)
+        ui->clipDepth -= 1;
+
+    if (ui->clipDepth > 0) {
+        GCRECT rect = ui->clipStack[ui->clipDepth - 1];
+        SDL_Rect clip = {(int)rect.x, (int)rect.y, (int)rect.w, (int)rect.h};
+        SDL_SetRenderClipRect((SDL_Renderer *)ui->window->renderer, &clip);
+    } else {
+        SDL_SetRenderClipRect((SDL_Renderer *)ui->window->renderer, NULL);
+    }
 }
 
 static inline void gc_text_centered(GCUI *ui, const char *text, GCRECT rect, GCCOLOR color)
