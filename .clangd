@@ -3,4 +3,4 @@ CompileFlags:
     - "-Wall"
     - "-Wextra"
     - "-Werror"
-    - "-I/home/giovanni/Work/Code/gcui/include/"
+    - "-ID:/code/gcui/include/"
