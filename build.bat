@@ -15,8 +15,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-copy /Y "%SDL_DIR%\bin\SDL3.dll" "bin\" >nul
-copy /Y "%SDL_DIR%\bin\SDL3_ttf.dll" "bin\" >nul
 
 echo Built %OUT%
 popd
