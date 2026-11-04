@@ -1,15 +1,15 @@
 # gcui
 
-Single-header immediate mode UI layer using SDL3.
+Single-header immediate mode UI layer using Win32 API.
 
 ## Build
 
-```sh
-make
-./bin/gcui_test
+```batch
+.\build.bat
+.\bin\gcui_test
 ```
 
-Requires SDL3 and SDL3_ttf. One default font is picked from the system at runtime; `gc_ui_set_font` overrides it.
+One default font is picked from the system at runtime; `gc_ui_set_font` overrides it.
 
 ## Frame loop
 

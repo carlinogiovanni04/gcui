@@ -2,8 +2,8 @@
 setlocal
 pushd "%~dp0"
 
-if not defined CC set CC=clang-cl
-if not defined SDL_DIR set SDL_DIR=C:\Users\Carli\Code\_libraries_
+if not defined CC set CC=cl
+if not defined SDL_DIR set SDL_DIR=D:\Libraries
 
 set OUT=bin\example.exe
 set INCLUDES=/I "include" /I "%SDL_DIR%\include"
