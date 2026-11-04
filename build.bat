@@ -3,15 +3,12 @@ setlocal
 pushd "%~dp0"
 
 if not defined CC set CC=cl
-if not defined SDL_DIR set SDL_DIR=D:\Libraries
 
 set OUT=bin\example.exe
-set INCLUDES=/I "include" /I "%SDL_DIR%\include"
-set LIBS="%SDL_DIR%\lib\x64\SDL3.lib" "%SDL_DIR%\lib\x64\SDL3_ttf.lib"
 
 if not exist bin mkdir bin
 
-%CC% /nologo /std:c11 /W4 /Zi /Od %INCLUDES% "examples\example.c" /Fe:"%OUT%" /Fo:"bin\\" /link /DEBUG %LIBS%
+%CC% /nologo /std:c11 /W4 /Zi /Od "examples\example.c" /Fe:"%OUT%" /Fo:"bin\\" 
 if errorlevel 1 (
     echo Build failed.
     popd
