@@ -2,15 +2,6 @@
 
 Single-header immediate mode UI layer using Win32 API.
 
-## Build
-
-```batch
-.\build.bat
-.\bin\gcui_test
-```
-
-One default font is picked from the system at runtime; `gc_ui_set_font` overrides it.
-
 ## Frame loop
 
 ```c
